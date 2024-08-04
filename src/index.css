@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Space+Grotesk:wght@300..700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: black;
+  color: white;
+}
+.input-field {
+  background-color: #070707;
+  border: 1px solid #131313;
+  border-radius: 8px;
+  color: white;
+  padding: 5px 15px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  outline: none;
+  font-weight: 600;
+}
+
+.label-field {
+  color: white;
+  text-transform: capitalize;
+  width: 100%;
+  font-weight: 600;
+}
+
+/* Hide the number input spinners in WebKit browsers (Chrome, Safari) */
+.input-field::-webkit-inner-spin-button,
+.input-field::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Remove default styling */
+  margin: 0; /* Remove margin */
+}
+
+/* Hide the number input spinners in Firefox */
+.input-field {
+  -moz-appearance: textfield; /* Use textfield appearance */
+}
+
+.btn-purple {
+  background-color: #a020f0;
+  color: white;
+  border-radius: 8px;
+  width: 100%;
+  text-transform: capitalize;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 10px 15px;
+  margin: 10px 0;
+}
+.btn-purple:hover {
+  background-color: #881bcb;
+}
