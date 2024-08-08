@@ -18,8 +18,14 @@
     "axios": "^1.7.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+<<<<<<< HEAD
     "react-hook-form": "^7.52.2",
     "styled-components": "^6.1.12"
+=======
+    "react-router-dom": "^6.26.0",
+    "styled-components": "^6.1.12",
+    "swiper": "^11.1.9"
+>>>>>>> 30227cc4fa06f3c750d637a7ea98e2c06e816a43
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
