@@ -20,7 +20,7 @@ const Navigation = ({ navigate, setNavigate }) => {
           <img src={Dashboardwhite} alt="dashboard" />
         )}
       </div>
-      <div onClick={() => handleNavigation("table")}>
+      <div className="" onClick={() => handleNavigation("table")}>
         {navigate === "table" ? (
           <img src={tablecolored} alt="table" />
         ) : (

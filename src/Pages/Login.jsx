@@ -1,58 +1,30 @@
 import React, { useState } from "react";
 import LogoLoading from "../Components/LogoLoading";
 import DataService from "../services/requestApi"; // Ensure the path is correct
+import { useAuth } from "../Context/AuthContext";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
+  const { Login, userData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
-  const data = {
-    UserId: "SH7357700108",
-    password: "Shoaib123",
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const login = async (e) => {
-    e.preventDefault();
-    setLoading(true); // Optional: Set loading state to true
+  const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      const response = await DataService.Login(data);
-      console.log(response);
-      setLoading(false); // Optional: Set loading state to false after the request
+      await Login(data.userId, data.password);
     } catch (error) {
-      console.error(error);
-      setLoading(false); // Optional: Set loading state to false in case of error
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const fetchApi = async (e) => {
-    e.preventDefault();
-
-    const url = "http://103.148.165.246:9000/api/auth/Login";
-    const payload = {
-      UserId: "SH7357700108",
-      password: "Shoaib123",
-    };
-
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-
-      const data = await res.json();
-      setResponse(data);
-    } catch (error) {
-      console.error("Error fetching the API:", error);
-    }
-  };
-
   return (
     <div className="">
       {loading ? (
@@ -63,13 +35,14 @@ const Login = () => {
             Login
           </div>
           <div className="mx-4 my-12">
-            <form onSubmit={login}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <label className="label-field">
                 user id
                 <input
                   placeholder="Enter Your Username"
                   className="input-field w-full"
                   type="text"
+                  {...register("userId")}
                 />
               </label>
               <label className="label-field">
@@ -78,6 +51,7 @@ const Login = () => {
                   placeholder="Enter Your Password"
                   className="input-field w-full"
                   type="password"
+                  {...register("password")}
                 />
               </label>
               <input type="submit" className="btn-purple" value="login" />
