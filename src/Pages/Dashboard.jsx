@@ -1,68 +1,90 @@
-import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, InputBase, Box } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
-import ServiceSwiper from './ServiceSwiper';
-import nftLogo from '../assets/nftlogo.png'; // Import the image
+import { Box, Typography, Avatar, IconButton, Paper, Card, CardContent } from "@mui/material";
+import PropTypes from "prop-types";
 
-
-const Hero = () => {
+const PageContent = ({ className = "" }) => {
   return (
     <>
-    <div className="bg-black min-h-screen flex flex-col text-white text-center p-2">
-      <AppBar position="static"   style={{  background:" rgba(255, 255, 255, 0.1)",
-  backdropFilter: "blur(10px)",
-  boxShadow:" 0 4px 6px rgba(0, 0, 0, 0.1)"}}  className=" shadow-none rounded">
-        <Toolbar className="flex justify-between">
-          <Box className="flex items-center space-x-2">
-            {/* <img src="/path-to-your-logo.png" alt="Logo" className="h-10 w-10" /> */}
-            <Typography variant="h6" className="font-bold">Company Name</Typography>
+    <Box
+      className={`flex flex-row items-start mt-5 justify-start py-0 pl-5 pr-6 box-border max-w-full text-left ${className}`}
+    >
+      <Box className="flex-1 flex flex-col items-end justify-start gap-1 max-w-full">
+        <Box className="flex flex-row items-start justify-between gap-5 w-full">
+          <Box className="flex flex-col items-start justify-start gap-5">
+            <Box className="flex flex-row items-center gap-1">
+              <Avatar
+                alt="Profile Image"
+                src="/unsplashpata8xe-ivm@2x.png"
+                sx={{ width: 48, height: 48 }}
+              />
+              <Box className="flex flex-col items-start justify-start">
+                <Paper
+                  elevation={3}
+                  className="flex flex-row items-center gap-1 rounded-full px-2 py-1 bg-gray-200"
+                >
+                  <Avatar
+                    alt="Ethereum Logo"
+                    src="/logo--24--ethereum.svg"
+                    sx={{ width: 24, height: 24 }}
+                  />
+                  <Typography variant="body2" fontWeight="medium">
+                    Level 10
+                  </Typography>
+                </Paper>
+              </Box>
+            </Box>
+            <Typography variant="h2" className="font-kalam">
+              <b>What is</b> <b className="font-k2d">FaithWealth?</b>
+            </Typography>
           </Box>
-          <Box className="flex items-center space-x-2">
-            <InputBase
-              placeholder="Search..."
-              startAdornment={<SearchIcon className="text-white" />}
-              className="bg-white text-black rounded-full px-3 py-1"
+          <IconButton>
+            <img
+              src="/settings3line.svg"
+              alt="Settings"
+              className="w-6 h-6"
             />
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      <div className="flex flex-col justify-center items-center flex-grow">
-        <div className="max-w-4xl mt-12 px-4 md:px-0">
-        <div className='rounded' style={{ backgroundImage: `url(${nftLogo})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">A great company has a great team behind</h3>
-          <p className="text-base md:text-lg mb-8">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit mattis sit
-            phasellus mollis sit aliquam sit nullam neque ultrices.
-          </p>
-          <Button variant="contained" color="primary" className="bg-white text-black rounded-full px-8 py-4">
-            Join our team
-          </Button>
-          </div>
-      
-          <div className="flex flex-wrap justify-around mt-12 space-x-0 md:space-x-4">
-            {[
-              { number: '360+', text: 'Clients worldwide' },
-              { number: '50+', text: 'Team members' },
-              { number: '480+', text: 'Projects completed' },
-              { number: '150M', text: 'Revenue generated' },
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className="glass-card text-center p-4 rounded-lg transform transition-transform duration-300 hover:scale-105 mb-4 w-full md:w-auto"
-              >
-                <h2 className="text-xl md:text-2xl font-bold">{stat.number}</h2>
-                <p className="text-sm md:text-base">{stat.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+          </IconButton>
+        </Box>
+        <div className="flex items-center justify-center bg-black mb-5  ">
+      <Card className="max-w-sm border-r-2 p-1 overflow-hidden shadow-lg bg-black text-white">
+        <img
+          className="w-full rounded bg-black"
+          src="rectangle-39395@2x.png" // Replace with your image URL
+          alt="Crypto"
+        />
+        <CardContent>
+          <Typography variant="body2" className="text-center">
+            Faithwealth is a pioneering company in the cryptocurrency and blockchain industry. We specialize in creating innovative blockchain solutions and providing secure, decentralized platforms for digital transactions. Our mission is to empower individuals and businesses by harnessing the power of blockchain technology to achieve financial freedom and transparency.
+          </Typography>
+        </CardContent>
+      </Card>
     </div>
-
-<ServiceSwiper />
+    <Typography variant="h2" className="font-kalam">
+            <b> NFT is</b> <b className="font-k2d"> Upcoming?</b>
+            </Typography>
+            <div className="flex items-center justify-center bg-black mb-5 ">
+      <Card className="max-w-sm border-r-2 p-1 mb-16 overflow-hidden shadow-lg bg-black text-white">
+        <img
+          className=" rounded bg-black"
+          src="rectangle-39395-1@2x.png" // Replace with your image URL
+          alt="Crypto"
+        />
+        <CardContent>
+          <Typography variant="body2" className="text-center">
+          We are thrilled to announce the upcoming launch of our exclusive NFT collection, designed to seamlessly integrate with our app and elevate your digital experience. These unique, limited-edition NFTs offer more than just ownership of digital art—they unlock special features, rewards, and personalized experiences within the app, allowing you to truly stand out in our community.
+          </Typography>
+        </CardContent>
+      </Card>
+    </div>
+      </Box>
+    </Box>
     </>
   );
 };
 
-export default Hero;
+PageContent.propTypes = {
+  className: PropTypes.string,
+};
+
+
+
+export default PageContent;
