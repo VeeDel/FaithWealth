@@ -39,7 +39,7 @@ const Login = () => {
               <label className="label-field">
                 user id
                 <input
-                  placeholder="Enter Your Username"
+                  placeholder="Enter Your UserId"
                   className="input-field w-full"
                   type="text"
                   {...register("userId")}

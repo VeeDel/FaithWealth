@@ -65,6 +65,7 @@ const Signup = () => {
               })}
               type="text"
               className="input-field w-full"
+              placeholder="Enter your Sponser Id"
             />
             {errors.Sponsor_id && (
               <p className="error-text">{errors.Sponsor_id.message}</p>
@@ -77,6 +78,7 @@ const Signup = () => {
               {...register("name", { required: "Full name is required" })}
               type="text"
               className="input-field w-full"
+              placeholder="Enter your Name"
             />
             {errors.name && <p className="error-text">{errors.name.message}</p>}
           </label>
@@ -88,6 +90,7 @@ const Signup = () => {
               })}
               type="text"
               className="input-field w-full"
+              placeholder="Enter your father name"
             />
             {errors.fatherName && (
               <p className="error-text">{errors.fatherName.message}</p>
@@ -109,6 +112,7 @@ const Signup = () => {
               })}
               type="text" // Changed to text
               className="input-field w-full"
+              placeholder="Enter your phone number"
             />
             {errors.phoneNo && (
               <p className="error-text">{errors.phoneNo.message}</p>
@@ -126,6 +130,7 @@ const Signup = () => {
               })}
               type="email"
               className="input-field w-full"
+              placeholder="Enter your email"
             />
             {errors.email && (
               <p className="error-text">{errors.email.message}</p>
@@ -143,6 +148,7 @@ const Signup = () => {
               })}
               type="password"
               className="input-field w-full"
+              placeholder="Enter password"
             />
             {errors.password && (
               <p className="error-text">{errors.password.message}</p>
@@ -158,6 +164,7 @@ const Signup = () => {
               })}
               type="password"
               className="input-field w-full"
+              placeholder="Confirm password"
             />
             {errors.confirmPassword && (
               <p className="error-text">{errors.confirmPassword.message}</p>

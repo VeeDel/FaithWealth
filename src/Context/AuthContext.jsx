@@ -104,7 +104,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const getUserNameBySponsorId = async (data) => {
-    const url = "auth/GetSponsor";
+    const url = "";
     try {
       const response = await fetch(`${BASE_URL}${url}/${data}`);
 
@@ -120,10 +120,32 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const getAmountAndAddress = async () => {
+    const url = `${BASE_URL}auth/GetPayAmount`;
+    try {
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authtoken: authToken,
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     // getUserNameBySponsorId("SH7357700100");
     if (authToken) {
       fetchUserData(authToken);
+      // getAmountAndAddress();
     }
   }, [authToken]);
 
@@ -139,6 +161,7 @@ const AuthProvider = ({ children }) => {
         isAuthenticated,
         SignUp,
         getUserNameBySponsorId,
+        getAmountAndAddress,
       }}
     >
       {children}
