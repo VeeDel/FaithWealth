@@ -17,7 +17,7 @@ const HomePage = () => {
       content = <Dashboard />;
       break;
     case "table":
-      content = <Table />;
+      content = <Table setNavigate={setNavigate} />;
       break;
   }
   return (
