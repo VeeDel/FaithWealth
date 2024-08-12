@@ -58,9 +58,7 @@ export default function BasicModal() {
             </h3>
             <div className="flex items-center justify-between">
               <h2 className="text-md font-semibold my-2 ">Amount To Pay:</h2>
-              <h2 className="text-md font-semibold my-2 ">
-                ${synchro?.amount}
-              </h2>
+              <h2 className="text-md font-semibold my-2 ">${synchro?.amount}</h2>
             </div>
             <button className="bg-primary text-white border-[1px] border-primary font-semibold active:bg-[#5746d5] rounded-xl h-full w-full active:scale-90 duration-75 p-2">
               Pay Now

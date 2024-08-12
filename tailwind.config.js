@@ -28,7 +28,7 @@ export default {
         custom: "61% 39% 81% 19% / 64% 27% 73% 36%",
       },
       colors: {
-        cardbg: "#ffffffde",
+        cardbg: "#4C2626",
         dimblack: "#0a0a0a",
         borderBlack: "#131313",
         primary: "#6552FE",
