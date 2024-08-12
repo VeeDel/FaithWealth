@@ -3,10 +3,10 @@ import axios from "axios";
 
 // const isDev = true;
 export const BASEURL = {
-  ENDPOINT_URL: "http://103.148.165.246:9000/auth/api",
+  ENDPOINT_URL: "http://103.148.165.246:9000/api/auth",
 };
 
-export const authToken = localStorage.getItem("token");
+export const authToken = localStorage.getItem("authtoken");
 
 export default axios.create({
   baseURL: `${BASEURL.ENDPOINT_URL}`,
