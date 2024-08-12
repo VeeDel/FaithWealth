@@ -1,3 +1,14 @@
+import nft0 from "../assets/nft0.jpg";
+import nft1 from "../assets/nft1.png";
+import nft2 from "../assets/nft2.png";
+import nft3 from "../assets/nft3.png";
+import nft4 from "../assets/nft4.png";
+import nft5 from "../assets/nft5.png";
+import nft6 from "../assets/nft8.png";
+import nft7 from "../assets/nft7.png";
+import nft8 from "../assets/nft6.png";
+import nft9 from "../assets/nft9.png";
+
 import React, { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Snackbar from "@mui/material/Snackbar";
@@ -31,12 +42,13 @@ const Profile = () => {
   function SlideTransition(props) {
     return <Slide {...props} direction="up" />;
   }
+  // const imageNumber = userData?.phoneNo?.slice(9, 10);
 
   return (
     <div>
       <div className="border-2 border-dimblack py-4 rounded-xl my-2 flex justify-evenly items-center">
         <div className="w-28 h-28 border-2 border-borderBlack  items-center flex justify-center rounded-full text-2xl font-semibold tracking-widest bg-dimblack  ">
-          {userData?.user_id?.slice(0, 2)}
+          <img src={nft0} className="w-full h-full rounded-full " />{" "}
         </div>
         <div>
           <h2 className="text-sm font-semibold">Level {userData.level}</h2>
