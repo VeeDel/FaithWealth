@@ -4,6 +4,7 @@ import Profile from "./Profile";
 import Dashboard from "./Dashboard";
 import Table from "./Table";
 import bglogo from "../assets/bgline.png";
+import Transacation from "./Transacation";
 const HomePage = () => {
   const [navigate, setNavigate] = useState("dashboard");
 
@@ -16,6 +17,9 @@ const HomePage = () => {
     case "dashboard":
       content = <Dashboard />;
       break;
+      case "transacation":
+        content = <Transacation />;
+        break;
     case "table":
       content = <Table setNavigate={setNavigate} />;
       break;
