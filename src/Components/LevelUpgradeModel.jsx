@@ -20,24 +20,29 @@ const style = {
 
 export default function BasicModal() {
   const { getAmountAndAddress } = useAuth();
+  const [synchro, setSynchro] = useState(null);
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [synchro, setSynchro] = useState(null);
+  const fetchSynchro = async () => {
+    try {
+      const details = await getAmountAndAddress();
+      setSynchro(details);
+    } catch (error) {
+      console.error("Error fetching payment details:", error);
+    }
+  };
 
-  useEffect(() => {
-    const fetchSynchro = async () => {
-      try {
-        const details = await getAmountAndAddress();
-        setSynchro(details);
-      } catch (error) {
-        console.error("Error fetching payment details:", error);
-      }
-    };
 
+ 
+  const handleOpen = () =>{
+     setOpen(true);
     fetchSynchro();
-  }, []);
+  };
+  
+
+
+
   console.log("details", synchro);
 
   return (
