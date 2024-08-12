@@ -48,11 +48,11 @@ const startPayment = async ({ setError, setTxs, bnb, addr }) => {
   }
 };
 
-export default function App() {
+export default function App({amount,address}) {
   const [error, setError] = useState();
   const [txs, setTxs] = useState([]);
-  const address = "0xE9Ea08c292d1FBf65f9cC8ddD1453465B406021C";
-  const amount = 0.005;
+  // const address = "0xE9Ea08c292d1FBf65f9cC8ddD1453465B406021C";
+  // const amount = 0.005;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

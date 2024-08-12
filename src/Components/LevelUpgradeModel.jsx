@@ -39,11 +39,6 @@ export default function BasicModal() {
      setOpen(true);
     fetchSynchro();
   };
-  
-
-
-
-  console.log("details", synchro);
 
   return (
     <div>
@@ -70,7 +65,7 @@ export default function BasicModal() {
               Pay Now
             </button>
           </div> */}
-          <PayButton />
+          {synchro &&<PayButton address={synchro.PayId}  amount={synchro.amount}/>}
         </Box>
       </Modal>
     </div>
