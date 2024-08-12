@@ -57,11 +57,11 @@ const Profile = () => {
       <div className="px-2 py-4 mx-1">
         <div className="flex justify-between">
           <h3 className="text-sm">Progress</h3>
-          <span className="text-sm font-semibold">{progressValue}/3000</span>
+          <span className="text-sm font-semibold">{userData &&userData.total_earning}/3000</span>
         </div>
         <LinearProgress
   variant="determinate"
-  value={(progressValue / 3000) * 100}
+  value={(userData &&userData.total_earning / 3000) * 100}
   sx={{
     height: 12,
     borderRadius: 6,
@@ -73,7 +73,7 @@ const Profile = () => {
   }}
 />
 
-        {progressValue === 3000 && (
+        {userData &&userData.total_earning === 3000 && (
           <button className="bg-primary text-white border-[1px] border-primary font-semibold active:bg-[#5746d5] rounded-xl h-full w-full mt-4 p-2">
             Claim Money
           </button>

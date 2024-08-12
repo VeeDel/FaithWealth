@@ -12,12 +12,13 @@ import {
   IconButton,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useAuth } from "../Context/AuthContext";
 
 const Table = ({setNavigate}) => {
   const [levelData, setLevelData] = useState([]);
   const [userData, setUserData] = useState({});
   const [isDetailView, setIsDetailView] = useState(false);
-
+  const {authToken} = useAuth()
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,9 +27,7 @@ const Table = ({setNavigate}) => {
           {
             headers: {
               Accept: "*/*",
-              "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-              authtoken:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjZiMTA1MjdhYmI3M2EyNTQ0Zjk1ODZkIn0sImlhdCI6MTcyMzEzMDQ2OX0.dsCtJwEVyO5jfOiNw70TG2A8UqWNfjtLUN2NB-nxEoE",
+              authtoken:authToken
             },
           }
         );
@@ -121,6 +120,7 @@ const Table = ({setNavigate}) => {
                 <th className="py-2 px-4 border border-gray-600">Name</th>
                 <th className="py-2 px-4 border border-gray-600 text-nowrap">Sponsor ID</th>
                 <th className="py-2 px-4 border border-gray-600 text-nowrap">Sponsor Name</th>
+                <th className="py-2 px-4 border border-gray-600 text-nowrap">Level</th>
                 <th className="py-2 px-4 border border-gray-600 text-nowrap">Register Date</th>
               </tr>
             </thead>
@@ -141,6 +141,9 @@ const Table = ({setNavigate}) => {
                   </td>
                   <td className="py-2 px-4 border border-gray-600 text-purple-400 text-center">
                     {row.Sponsor_Name}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-600 text-purple-400 text-center">
+                    {row.level}
                   </td>
                   <td className="py-2 px-4 border border-gray-600 text-purple-400 text-center">
                     {new Date(row.Register_date).toLocaleDateString()}
