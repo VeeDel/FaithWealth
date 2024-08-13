@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
+import { useAuth } from "../Context/AuthContext";
 
 const supportedChains = {
   bscTestnet: {
@@ -9,8 +10,7 @@ const supportedChains = {
     rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545", // BSC Testnet RPC URL
   },
 };
-
-const startPayment = async ({ setError, setTxs, bnb, addr }) => {
+const startPayment = async ({ setError, setTxs, bnb, addr, LevelUpdate }) => {
   try {
     if (!window.ethereum)
       throw new Error("No crypto wallet found. Please install it.");
@@ -37,22 +37,40 @@ const startPayment = async ({ setError, setTxs, bnb, addr }) => {
     // Send BNB on BSC Testnet
     const tx = await signer.sendTransaction({
       to: addr,
-      value: ethers.utils.parseUnits(bnb.toString(), 18), // Convert BNB amount to Wei (18 decimals)
+      value: ethers.utils.parseUnits(bnb.toString(), 18),
     });
+
+    const data = {
+      transaction_id: tx.hash,
+      t_status: "success",
+      to_payed: tx.from,
+    };
 
     console.log({ bnb, addr });
     console.log("tx", tx);
+    LevelUpdate(data);
     setTxs([tx]);
   } catch (err) {
     setError(err.message);
   }
 };
 
-export default function App() {
+export default function App({ amount, address }) {
+  const { LevelUpdate } = useAuth();
+  useEffect(() => {
+    const data = {
+      transaction_id:
+        "0x3b8bc795ce514bb29311a93b027ccddda75ca53e2c56cdfe4e6981423d92ff9e",
+      t_status: "success",
+      to_payed: "0x8D90c628A00c79329AE33d29adFF543365AC7e6f",
+    };
+    // LevelUpdate(data);
+  });
+
   const [error, setError] = useState();
   const [txs, setTxs] = useState([]);
-  const address = "0xE9Ea08c292d1FBf65f9cC8ddD1453465B406021C";
-  const amount = 0.005;
+  // const address = "0xE9Ea08c292d1FBf65f9cC8ddD1453465B406021C";
+  // const amount = 0.005;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,8 +78,9 @@ export default function App() {
     await startPayment({
       setError,
       setTxs,
-      bnb: amount, // Use the correct variable names
-      addr: address, // Use the correct variable names
+      bnb: amount,
+      addr: address,
+      LevelUpdate,
     });
   };
 

@@ -13,12 +13,14 @@ import React, { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Snackbar from "@mui/material/Snackbar";
 import Slide from "@mui/material/Slide";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useAuth } from "../Context/AuthContext";
 import LevelUpgradeModel from "../Components/LevelUpgradeModel";
+
 const Profile = () => {
   const { userData } = useAuth();
   console.log(userData);
-  const id = userData.user_id;
+  const id = userData?.user_id;
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [transition, setTransition] = useState(undefined);
@@ -44,6 +46,8 @@ const Profile = () => {
   }
   // const imageNumber = userData?.phoneNo?.slice(9, 10);
 
+  // const progressValue = 3000;
+
   return (
     <div>
       <div className="border-2 border-dimblack py-4 rounded-xl my-2 flex justify-evenly items-center">
@@ -51,7 +55,7 @@ const Profile = () => {
           <img src={nft0} className="w-full h-full rounded-full " />{" "}
         </div>
         <div>
-          <h2 className="text-sm font-semibold">Level {userData.level}</h2>
+          <h2 className="text-sm font-semibold">Level {userData?.level}</h2>
           <h3 className="text-sm tracking-wider flex items-center gap-2">
             {id}
             <button onClick={handleCopy} className="text-[#666] cursor-pointer">
@@ -61,29 +65,58 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Progress bar with label */}
+      <div className="px-2 py-4 mx-1">
+        <div className="flex justify-between">
+          <h3 className="text-sm">Progress</h3>
+          <span className="text-sm font-semibold">
+            {userData && userData.total_earning}/3000
+          </span>
+        </div>
+        <LinearProgress
+          variant="determinate"
+          value={(userData && userData.total_earning / 3000) * 100}
+          sx={{
+            height: 12,
+            borderRadius: 6,
+            marginTop: 1,
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#9B5DE5", // Bar color
+            },
+            backgroundColor: "#e0e0e0", // Background color of the track
+          }}
+        />
+
+        {userData && userData.total_earning === 3000 && (
+          <button className="bg-primary text-white border-[1px] border-primary font-semibold active:bg-[#5746d5] rounded-xl h-full w-full mt-4 p-2">
+            Claim Money
+          </button>
+        )}
+      </div>
+
       <div className="block bg-dimblack px-2 py-4 mx-1 text-lg border-b-2 border-borderBlack">
         <h3 className="text-sm">Your Name</h3>
-        {userData.name}
+        {userData?.name}
       </div>
-      <div className="block  px-2 py-4 mx-1 text-lg border-b-2 border-borderBlack">
+      <div className="block px-2 py-4 mx-1 text-lg border-b-2 border-borderBlack">
         <h3 className="text-sm">Phone Number</h3>
-        {userData.phoneNo}
+        {userData?.phoneNo}
       </div>
       <div className="block bg-dimblack px-2 py-4 mx-1 text-md border-b-2 border-borderBlack">
         <h3 className="text-sm">Email</h3>
-        {userData.email}{" "}
+        {userData?.email}
       </div>
       <div className="block px-2 py-4 mx-1 text-lg border-b-2 border-borderBlack">
-        <h3 className="text-sm">sponser Name</h3>
-        {userData.Sponsor_Name}
+        <h3 className="text-sm">Sponsor Name</h3>
+        {userData?.Sponsor_Name}
       </div>
       <div className="block bg-dimblack px-2 py-4 mx-1 text-lg border-b-2 border-borderBlack">
-        <h3 className="text-sm">sponser id</h3>
-        {userData.Sponsor_id}{" "}
+        <h3 className="text-sm">Sponsor ID</h3>
+        {userData?.Sponsor_id}
       </div>
       <div className="block px-2 py-4 mx-1 text-[10px] border-b-2 border-borderBlack">
         <h3 className="text-sm">PayId Address</h3>
-        {userData.PayId}
+        {userData?.PayId}
       </div>
 
       <div className="flex gap-2">
