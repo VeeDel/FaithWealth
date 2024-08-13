@@ -6,7 +6,8 @@ const AuthContext = createContext(null);
 const BASE_URL = "http://103.148.165.246:9000/api/";
 
 const AuthProvider = ({ children }) => {
-  //   const navigate = Navigate();
+  // const navigate = Navigate();
+
   const [response, setResponse] = useState(null);
   const [authToken, setAuthToken] = useState(
     localStorage?.getItem("authtoken")
@@ -140,12 +141,35 @@ const AuthProvider = ({ children }) => {
       console.error(error);
     }
   };
+  const LevelUpdate = async (data) => {
+    const url = `${BASE_URL}auth/levelUpgrade`;
+    try {
+      const res = await fetch(url, {
+        method: "POST", // Use POST method to send data
+        headers: {
+          "Content-Type": "application/json",
+          authtoken: authToken,
+        },
+        body: JSON.stringify(data), // Send data in the request body
+      });
+
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      }
+
+      const responseData = await res.json();
+      return responseData;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     // getUserNameBySponsorId("SH7357700100");
     if (authToken) {
       fetchUserData(authToken);
       // getAmountAndAddress();
+      // LevelUpdate(data);
     }
   }, [authToken]);
 
@@ -154,14 +178,15 @@ const AuthProvider = ({ children }) => {
       value={{
         response,
         authToken,
-        Login,
-        fetchUserData,
         userData,
         loading,
         isAuthenticated,
+        Login,
+        fetchUserData,
         SignUp,
         getUserNameBySponsorId,
         getAmountAndAddress,
+        LevelUpdate,
       }}
     >
       {children}

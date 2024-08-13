@@ -1,3 +1,14 @@
+import nft0 from "../assets/nft0.jpg";
+import nft1 from "../assets/nft1.png";
+import nft2 from "../assets/nft2.png";
+import nft3 from "../assets/nft3.png";
+import nft4 from "../assets/nft4.png";
+import nft5 from "../assets/nft5.png";
+import nft6 from "../assets/nft8.png";
+import nft7 from "../assets/nft7.png";
+import nft8 from "../assets/nft6.png";
+import nft9 from "../assets/nft9.png";
+
 import React, { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Snackbar from "@mui/material/Snackbar";
@@ -33,14 +44,15 @@ const Profile = () => {
   function SlideTransition(props) {
     return <Slide {...props} direction="up" />;
   }
+  // const imageNumber = userData?.phoneNo?.slice(9, 10);
 
-  const progressValue = 3000; // This value should be dynamically set based on your logic
+  // const progressValue = 3000;
 
   return (
     <div>
       <div className="border-2 border-dimblack py-4 rounded-xl my-2 flex justify-evenly items-center">
-        <div className="w-28 h-28 border-2 border-borderBlack items-center flex justify-center rounded-full text-2xl font-semibold tracking-widest bg-dimblack">
-          {userData?.user_id?.slice(0, 2)}
+        <div className="w-28 h-28 border-2 border-borderBlack  items-center flex justify-center rounded-full text-2xl font-semibold tracking-widest bg-dimblack  ">
+          <img src={nft0} className="w-full h-full rounded-full " />{" "}
         </div>
         <div>
           <h2 className="text-sm font-semibold">Level {userData?.level}</h2>
@@ -57,23 +69,25 @@ const Profile = () => {
       <div className="px-2 py-4 mx-1">
         <div className="flex justify-between">
           <h3 className="text-sm">Progress</h3>
-          <span className="text-sm font-semibold">{userData &&userData.total_earning}/3000</span>
+          <span className="text-sm font-semibold">
+            {userData && userData.total_earning}/3000
+          </span>
         </div>
         <LinearProgress
-  variant="determinate"
-  value={(userData &&userData.total_earning / 3000) * 100}
-  sx={{
-    height: 12,
-    borderRadius: 6,
-    marginTop: 1,
-    "& .MuiLinearProgress-bar": {
-      backgroundColor: "#9B5DE5", // Bar color
-    },
-    backgroundColor: "#e0e0e0", // Background color of the track
-  }}
-/>
+          variant="determinate"
+          value={(userData && userData.total_earning / 3000) * 100}
+          sx={{
+            height: 12,
+            borderRadius: 6,
+            marginTop: 1,
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#9B5DE5", // Bar color
+            },
+            backgroundColor: "#e0e0e0", // Background color of the track
+          }}
+        />
 
-        {userData &&userData.total_earning === 3000 && (
+        {userData && userData.total_earning === 3000 && (
           <button className="bg-primary text-white border-[1px] border-primary font-semibold active:bg-[#5746d5] rounded-xl h-full w-full mt-4 p-2">
             Claim Money
           </button>
