@@ -1,13 +1,29 @@
+import { Alert, Snackbar } from "@mui/material";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { BASEURL } from "../services/http-Pos";
 // import { Navigate } from "react-router-dom";
-
+import CheckIcon from "@mui/icons-material/Check";
 const AuthContext = createContext(null);
 
 const BASE_URL = BASEURL.ENDPOINT_URL;
 
 const AuthProvider = ({ children }) => {
   // const navigate = Navigate();
+
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+    severity: "",
+  });
+
+  const showAlert = (message, severity) => {
+    setAlert({ show: true, message, severity });
+    setTimeout(
+      () => setAlert({ show: false, message: "", severity: "" }),
+      2000
+    ); // Hide the alert after 2 seconds
+  };
+
 
   const [response, setResponse] = useState(null);
   const [authToken, setAuthToken] = useState(
@@ -37,9 +53,17 @@ const AuthProvider = ({ children }) => {
       }
 
       const data = await res.json();
-      setResponse(data);
-      setAuthToken(data.authtoken);
-      localStorage.setItem("authtoken", data.authtoken);
+      if (data.success) {
+        setResponse(data);
+        setAuthToken(data.authtoken);
+        localStorage.setItem("authtoken", data.authtoken);
+  
+        // Show success alert
+        showAlert("Login successful!", "success");
+      } else {
+        // Show error alert if the success flag is not true
+        showAlert("Login failed. Please try again.", "error");
+      }
     } catch (error) {
       console.error("Error fetching the API:", error);
     }
@@ -181,6 +205,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         response,
+        showAlert,
         authToken,
         userData,
         loading,
@@ -194,6 +219,21 @@ const AuthProvider = ({ children }) => {
       }}
     >
       {children}
+      {alert.show && (
+        <Snackbar
+          open={alert.show}
+          autoHideDuration={2000}
+          onClose={() => setAlert({ show: false, message: "", severity: "" })}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            severity={alert.severity}
+            variant="filled"
+          >
+            {alert.message}
+          </Alert>
+        </Snackbar>
+      )}
     </AuthContext.Provider>
   );
 };
