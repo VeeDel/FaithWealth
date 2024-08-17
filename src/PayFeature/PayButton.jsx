@@ -43,14 +43,14 @@ const startPayment = async ({ setError, setTxs, bnb, addr, LevelUpdate }) => {
     const data = {
       transaction_id: tx.hash,
       t_status: "success",
-      to_payed: tx.from,
+      to_payed: tx.to,
     };
 
     console.log({ bnb, addr });
     console.log("tx", tx);
     LevelUpdate(data);
     setTxs([tx]);
-  } catch (err) {
+  } catch (err) { 
     setError(err.message);
   }
 };

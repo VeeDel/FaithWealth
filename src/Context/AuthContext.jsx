@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { BASEURL } from "../services/http-Pos";
 // import { Navigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
-const BASE_URL = "http://103.148.165.246:9000/api/";
+const BASE_URL = BASEURL.ENDPOINT_URL;
 
 const AuthProvider = ({ children }) => {
   // const navigate = Navigate();
@@ -105,9 +106,8 @@ const AuthProvider = ({ children }) => {
   };
 
   const getUserNameBySponsorId = async (data) => {
-    const url = "";
     try {
-      const response = await fetch(`${BASE_URL}${url}/${data}`);
+      const response = await fetch(`${BASE_URL}/GetSponsor/${data}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -156,8 +156,12 @@ const AuthProvider = ({ children }) => {
       if (!res.ok) {
         throw new Error(`Error: ${res.status}`);
       }
-
       const responseData = await res.json();
+      if(responseData.success){
+        fetchUserData(authToken);
+        
+      }
+      
       return responseData;
     } catch (error) {
       console.error(error);

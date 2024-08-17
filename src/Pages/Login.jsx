@@ -3,6 +3,7 @@ import LogoLoading from "../Components/LogoLoading";
 import DataService from "../services/requestApi"; // Ensure the path is correct
 import { useAuth } from "../Context/AuthContext";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { Login, userData } = useAuth();
@@ -12,7 +13,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors ,isSubmitting},
   } = useForm();
 
   const onSubmit = async (data) => {
@@ -54,11 +55,11 @@ const Login = () => {
                   {...register("password")}
                 />
               </label>
-              <input type="submit" className="btn-purple" value="login" />
+              <input disabled={isSubmitting} type="submit" className="btn-purple" value="login" />
             </form>
             <p className="text-center tracking-wide my-1 font-medium">
               Already have an account?
-              <a className="text-[#a020f0] mx-1 ">Signup</a>
+              <Link to='/signup' className="text-[#a020f0] mx-1 ">Signup</Link>
             </p>
           </div>
         </>

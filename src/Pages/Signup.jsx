@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
   const { SignUp, getUserNameBySponsorId } = useAuth();
@@ -9,7 +10,7 @@ const Signup = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors ,isSubmitting},
     watch,
   } = useForm();
 
@@ -31,7 +32,7 @@ const Signup = () => {
       if (Sponsor_id?.length === 12) {
         try {
           const result = await getUserNameBySponsorId(Sponsor_id);
-          setSponsorName(result.name);
+          setSponsorName(result?.name);
         } catch (error) {
           console.error("Error fetching sponsor name:", error);
         }
@@ -68,7 +69,7 @@ const Signup = () => {
               placeholder="Enter your Sponser Id"
             />
             {errors.Sponsor_id && (
-              <p className="error-text">{errors.Sponsor_id.message}</p>
+              <p className="error-text text-red-500">{errors.Sponsor_id.message}</p>
             )}
           </label>
 
@@ -80,7 +81,7 @@ const Signup = () => {
               className="input-field w-full"
               placeholder="Enter your Name"
             />
-            {errors.name && <p className="error-text">{errors.name.message}</p>}
+            {errors.name && <p className="error-text text-red-500">{errors.name.message}</p>}
           </label>
           <label className="label-field">
             Father name
@@ -93,7 +94,7 @@ const Signup = () => {
               placeholder="Enter your father name"
             />
             {errors.fatherName && (
-              <p className="error-text">{errors.fatherName.message}</p>
+              <p className="error-text text-red-500">{errors.fatherName.message}</p>
             )}
           </label>
           <label className="label-field">
@@ -115,7 +116,7 @@ const Signup = () => {
               placeholder="Enter your phone number"
             />
             {errors.phoneNo && (
-              <p className="error-text">{errors.phoneNo.message}</p>
+              <p className="error-text text-red-500">{errors.phoneNo.message}</p>
             )}
           </label>
           <label className="label-field">
@@ -133,7 +134,7 @@ const Signup = () => {
               placeholder="Enter your email"
             />
             {errors.email && (
-              <p className="error-text">{errors.email.message}</p>
+              <p className="error-text text-red-500">{errors.email.message}</p>
             )}
           </label>
           <label className="label-field">
@@ -151,7 +152,7 @@ const Signup = () => {
               placeholder="Enter password"
             />
             {errors.password && (
-              <p className="error-text">{errors.password.message}</p>
+              <p className="error-text text-red-500">{errors.password.message}</p>
             )}
           </label>
           <label className="label-field">
@@ -167,14 +168,14 @@ const Signup = () => {
               placeholder="Confirm password"
             />
             {errors.confirmPassword && (
-              <p className="error-text">{errors.confirmPassword.message}</p>
+              <p className="error-text text-red-500">{errors.confirmPassword.message}</p>
             )}
           </label>
-          <input className="btn-purple" type="submit" value="Sign up" />
+          <input disabled={isSubmitting} className="btn-purple" type="submit" value="Sign up" />
         </form>
         <p className="text-center tracking-wide my-1 font-medium">
           Already have an account?
-          <span className="text-[#a020f0] mx-1">Login</span>
+          <Link to='/login' className="text-[#a020f0] mx-1">Login</Link>
         </p>
       </div>
     </div>
