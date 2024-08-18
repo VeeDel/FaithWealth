@@ -8,7 +8,7 @@ export default function App({ amount, address }) {
   const { startPayment } = useAuth();
   const [error, setError] = useState();
   const [txs, setTxs] = useState([]);
-
+  console.log("pay now", address, amount);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError();

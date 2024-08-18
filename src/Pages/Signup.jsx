@@ -3,10 +3,11 @@ import { useAuth } from "../Context/AuthContext";
 import { useForm } from "react-hook-form";
 import ConnectMetaMaskPage from "./ConnectMetaMaskPage";
 import { Link } from "react-router-dom";
-
+import SignUpPaymentModel from "../Components/SignUpPaymentModel";
 const Signup = () => {
   const { SignUp, getUserNameBySponsorId, userAddress } = useAuth();
   const [sponsorName, setSponsorName] = useState();
+  const [sponsorDetails, setSponsorDetails] = useState();
 
   const {
     register,
@@ -19,6 +20,9 @@ const Signup = () => {
     const payload = {
       ...data,
       payId: userAddress,
+      transaction_id: "0xji8gyvg307dbfudsf908a9a8s9d",
+      t_status: "success",
+      to_pay: sponsorDetails?.PayId,
     };
     try {
       await SignUp(payload);
@@ -37,6 +41,7 @@ const Signup = () => {
         try {
           const result = await getUserNameBySponsorId(Sponsor_id);
           setSponsorName(result?.name);
+          setSponsorDetails(result);
         } catch (error) {
           console.error("Error fetching sponsor name:", error);
         }
@@ -47,7 +52,7 @@ const Signup = () => {
 
     fetchSponsorName();
   }, [Sponsor_id, getUserNameBySponsorId]);
-
+  console.log("sponserName", sponsorDetails?.PayId);
   // If userAddress is null or empty, show the ConnectMetaMaskPage
   if (!userAddress) {
     return <ConnectMetaMaskPage />;
@@ -205,6 +210,7 @@ const Signup = () => {
             value="Sign up"
           />
         </form>
+
         <p className="text-center tracking-wide my-1 font-medium">
           Already have an account?
           <Link to="/login" className="text-[#a020f0] mx-1">
