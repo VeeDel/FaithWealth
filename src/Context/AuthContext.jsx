@@ -2,6 +2,8 @@ import { Alert, Snackbar } from "@mui/material";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { BASEURL } from "../services/http-Pos";
 // import { Navigate } from "react-router-dom";
+import { ethers } from "ethers";
+
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 const AuthContext = createContext(null);
@@ -24,7 +26,6 @@ const AuthProvider = ({ children }) => {
       2000
     ); // Hide the alert after 2 seconds
   };
-
 
   const [response, setResponse] = useState(null);
   const [authToken, setAuthToken] = useState(
@@ -58,7 +59,7 @@ const AuthProvider = ({ children }) => {
         setResponse(data);
         setAuthToken(data.authtoken);
         localStorage.setItem("authtoken", data.authtoken);
-  
+
         // Show success alert
         showAlert("Login successful!", "success");
       } else {
@@ -83,7 +84,7 @@ const AuthProvider = ({ children }) => {
       password: data.password,
       email: data.email,
       Upi_no: data.phoneNo,
-      PayId: "payId will give from metamask",
+      PayId: data.payId,
     };
     try {
       const res = await fetch(url, {
@@ -131,8 +132,9 @@ const AuthProvider = ({ children }) => {
   };
 
   const getUserNameBySponsorId = async (data) => {
+    const url = "GetSponsor/";
     try {
-      const response = await axios.get(`${BASE_URL}/GetSponsor/${data}`);
+      const response = await fetch(`${BASE_URL}/${url}${data}`);
 
       if (!response.ok) {
         showAlert(response.error, "error");
@@ -140,7 +142,7 @@ const AuthProvider = ({ children }) => {
       }
 
       const result = await response.json();
-      return result; // Return the result if you need to use it
+      return result;
     } catch (error) {
       showAlert(error.response.data.error, "error");
       console.log("Error fetching user name by sponsor ID:", error);
@@ -172,7 +174,7 @@ const AuthProvider = ({ children }) => {
     const url = `${BASE_URL}auth/levelUpgrade`;
     try {
       const res = await fetch(url, {
-        method: "POST", // Use POST method to send data
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           authtoken: authToken,
@@ -184,11 +186,10 @@ const AuthProvider = ({ children }) => {
         throw new Error(`Error: ${res.status}`);
       }
       const responseData = await res.json();
-      if(responseData.success){
+      if (responseData.success) {
         fetchUserData(authToken);
-        
       }
-      
+
       return responseData;
     } catch (error) {
       console.error(error);
@@ -196,14 +197,123 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // getUserNameBySponsorId("SH7357700100");
     if (authToken) {
       fetchUserData(authToken);
-      // getAmountAndAddress();
-      // LevelUpdate(data);
     }
   }, [authToken]);
 
+  const [userAddress, setUserAddress] = useState("");
+  const [isConnecting, setIsConnecting] = useState(false);
+  const connectMetaMask = async () => {
+    if (isConnecting) return; // Prevent multiple connections
+    setIsConnecting(true);
+
+    if (window.ethereum) {
+      try {
+        // Check if MetaMask is already connected
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
+        });
+        if (accounts.length > 0) {
+          setUserAddress(accounts[0]);
+          console.log("MetaMask already connected:", accounts[0]);
+          setIsConnecting(false);
+          return;
+        }
+
+        // Request access to the user's MetaMask account
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+
+        // Create a new provider using ethers.js
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // Get the signer (the connected MetaMask account)
+        const signer = provider.getSigner();
+
+        // Retrieve the user's MetaMask address
+        const address = await signer.getAddress();
+        setUserAddress(address);
+        // addressId(address);
+        console.log("MetaMask Address:", address);
+      } catch (error) {
+        console.error("Error connecting MetaMask:", error);
+      } finally {
+        setIsConnecting(false);
+      }
+    } else {
+      console.error("MetaMask not detected");
+      setIsConnecting(false);
+    }
+  };
+  console.log(userAddress);
+
+  // Start Payment:--------
+
+  const supportedChains = {
+    bscMainnet: {
+      chainId: 56, // BSC Mainnet chain ID
+      rpcUrl: "https://bsc-dataseed.binance.org/", // BSC Mainnet RPC URL
+    },
+  };
+  const startPayment = async ({ setError, setTxs, bnb, addr }) => {
+    try {
+      if (!window.ethereum)
+        throw new Error("No crypto wallet found. Please install it.");
+
+      // Convert the chainId to a hexadecimal string with a 0x prefix
+      const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
+
+      // Check if user is connected to the BSC Mainnet
+      if (window.ethereum.chainId !== chainIdHex) {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: chainIdHex }],
+        });
+      }
+
+      // After network switch, reinitialize the provider and signer
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []); // Request accounts if not already requested
+      const signer = provider.getSigner();
+
+      // Validate address format
+      ethers.utils.getAddress(addr);
+
+      // Send BNB on BSC Mainnet
+      const tx = await signer.sendTransaction({
+        to: addr,
+        value: ethers.utils.parseUnits(bnb.toString(), 18),
+      });
+
+      // Wait for the transaction to be mined
+      const receipt = await tx.wait();
+
+      if (receipt.status === 1) {
+        // Transaction was successful
+        const data = {
+          transaction_id: tx.hash,
+          t_status: "success",
+          to_payed: tx.from,
+        };
+        LevelUpdate(data);
+        setTxs([tx]);
+      } else {
+        // Transaction failed
+        throw new Error("Transaction failed. Please try again.");
+      }
+    } catch (err) {
+      // Handle insufficient funds error
+      if (
+        err.code === -32603 &&
+        err.data?.code === -32000 &&
+        err.data?.message.includes("insufficient funds")
+      ) {
+        setError("Insufficient balance in account. Please add some amount.");
+      } else {
+        setError(err.message);
+      }
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -213,12 +323,15 @@ const AuthProvider = ({ children }) => {
         userData,
         loading,
         isAuthenticated,
+        userAddress,
         Login,
         fetchUserData,
         SignUp,
         getUserNameBySponsorId,
         getAmountAndAddress,
         LevelUpdate,
+        connectMetaMask,
+        startPayment,
       }}
     >
       {children}
