@@ -63,7 +63,7 @@ function Transaction() {
         {transactionData && transactionData.length > 0 ? (
           transactionData.map((transaction) => (
             <Card
-              key={transaction._id}
+              key={transaction?._id}
               className="shadow-lg rounded-lg mb-4"
               sx={{
                 backgroundColor: '#000',
@@ -75,7 +75,7 @@ function Transaction() {
                  <b> Transaction Details  </b>  
                  
                  <b style={{    fontSize: "0.875rem"}} className='text-white px-2'>
-  {value === 0 ? `` :`From  ${ transaction?.Give_by.name}`}
+  {value === 0 ? `` :`From  ${ transaction?.Give_by?.name}`}
 </b>
 
                 </Typography>
@@ -91,7 +91,7 @@ function Transaction() {
   }} 
   className="font-semibold"
 >
-  {`${transaction.PaymentRefernce_id.slice(0, Math.ceil(transaction.PaymentRefernce_id.length * 0.2))}...`}
+  {`${transaction?.PaymentRefernce_id.slice(0, Math.ceil(transaction?.PaymentRefernce_id.length * 0.2))}...`}
 </Typography>
 
                   </Grid>
@@ -100,7 +100,7 @@ function Transaction() {
                       Time & Date:
                     </Typography>
                     <Typography  style={{    fontSize:" 0.775rem"}} variant="body2" sx={{ color: '#9B5DE5' }} className="font-semibold">
-                      {new Date(transaction.date).toLocaleString()}
+                      {new Date(transaction?.date).toLocaleString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -114,7 +114,7 @@ function Transaction() {
                       }}
                       className="font-semibold"
                     >
-                      {transaction.status}
+                      {transaction?.status}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -122,7 +122,7 @@ function Transaction() {
                       Amount:
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#9B5DE5' }} className="font-semibold">
-                      {transaction.amount}
+                      {transaction?.amount}
                     </Typography>
                   </Grid>
                 </Grid>

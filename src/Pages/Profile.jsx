@@ -16,7 +16,7 @@ import Slide from "@mui/material/Slide";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useAuth } from "../Context/AuthContext";
 import LevelUpgradeModel from "../Components/LevelUpgradeModel";
-
+import LogoutIcon from '@mui/icons-material/Logout';
 const Profile = () => {
   const { userData } = useAuth();
   console.log(userData);
@@ -55,7 +55,8 @@ const Profile = () => {
           <img src={nft0} className="w-full h-full rounded-full " />{" "}
         </div>
         <div>
-          <h2 className="text-sm font-semibold">Level {userData?.level}</h2>
+          <h2 className="text-sm font-semibold">Level {userData?.level} <LogoutIcon className="text-white mx-2"/></h2>
+          
           <h3 className="text-sm tracking-wider flex items-center gap-2">
             {id}
             <button onClick={handleCopy} className="text-[#666] cursor-pointer">
