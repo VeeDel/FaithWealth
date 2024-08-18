@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { BASEURL } from "../services/http-Pos";
 // import { Navigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
+import axios from "axios";
 const AuthContext = createContext(null);
 
 const BASE_URL = BASEURL.ENDPOINT_URL;
@@ -131,16 +132,18 @@ const AuthProvider = ({ children }) => {
 
   const getUserNameBySponsorId = async (data) => {
     try {
-      const response = await fetch(`${BASE_URL}/GetSponsor/${data}`);
+      const response = await axios.get(`${BASE_URL}/GetSponsor/${data}`);
 
       if (!response.ok) {
+        showAlert(response.error, "error");
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const result = await response.json();
       return result; // Return the result if you need to use it
     } catch (error) {
-      console.error("Error fetching user name by sponsor ID:", error);
+      showAlert(error.response.data.error, "error");
+      console.log("Error fetching user name by sponsor ID:", error);
       // Optionally, handle the error further or rethrow it
     }
   };

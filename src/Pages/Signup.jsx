@@ -43,7 +43,7 @@ const Signup = () => {
     }
 
     fetchSponsorName();
-  }, [Sponsor_id, getUserNameBySponsorId]); // Dependencies
+  }, [Sponsor_id]); // Dependencies
 
   console.log(sponsorName);
   return (
