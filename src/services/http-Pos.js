@@ -11,7 +11,7 @@ export const authToken = localStorage.getItem("authtoken");
 export default axios.create({
   baseURL: `${BASEURL.ENDPOINT_URL}`,
   headers: {
-    authtoken: `${authToken}`,
+    "authtoken": `${authToken}`,
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",
   },
