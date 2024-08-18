@@ -51,8 +51,8 @@ const Signup = () => {
     };
 
     fetchSponsorName();
-  }, [Sponsor_id, getUserNameBySponsorId]);
-  console.log("sponserName", sponsorDetails?.PayId);
+  }, [Sponsor_id]); // Dependencies
+
   // If userAddress is null or empty, show the ConnectMetaMaskPage
   if (!userAddress) {
     return <ConnectMetaMaskPage />;
