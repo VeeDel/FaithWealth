@@ -72,12 +72,11 @@ const AuthProvider = ({ children }) => {
   };
 
   const SignUp = async (data) => {
-    const url = `${BASE_URL}auth/UserRegister`;
+    const url = `${BASE_URL}/UserRegister`;
     const payload = {
       name: data.name,
       fatherName: data.fatherName,
       Sponsor_id: data.Sponsor_id,
-      Address: "somewhere",
       city: "somecity",
       State: "somestate",
       phoneNo: data.phoneNo,
@@ -85,6 +84,9 @@ const AuthProvider = ({ children }) => {
       email: data.email,
       Upi_no: data.phoneNo,
       PayId: data.payId,
+      t_status: data.t_status,
+      transaction_id: data.transaction_id,
+      to_pay: data.to_pay,
     };
     try {
       const res = await fetch(url, {
@@ -314,6 +316,60 @@ const AuthProvider = ({ children }) => {
       }
     }
   };
+
+  const SignUpPayment = async ({ payload, bnb, addr, setError }) => {
+    try {
+      if (!window.ethereum)
+        throw new Error("No crypto wallet found. Please install it.");
+
+      // Ensure the address is valid before proceeding
+      if (!addr) {
+        throw new Error(
+          "Invalid address provided. Please check the address input."
+        );
+      }
+
+      ethers.utils.getAddress(addr);
+
+      const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
+
+      if (window.ethereum.chainId !== chainIdHex) {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: chainIdHex }],
+        });
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+
+      // Send BNB on BSC Mainnet
+      const tx = await signer.sendTransaction({
+        to: addr,
+        value: ethers.utils.parseUnits(bnb.toString(), 18),
+      });
+
+      const receipt = await tx.wait();
+
+      if (receipt.status === 1) {
+        // Transaction was successful
+        await SignUp(payload); // Make sure SignUp is an async function if it returns a promise
+      } else {
+        throw new Error("Transaction failed. Please try again.");
+      }
+    } catch (err) {
+      if (
+        err.code === -32603 &&
+        err.data?.code === -32000 &&
+        err.data?.message.includes("insufficient funds")
+      ) {
+        setError("Insufficient balance in account. Please add some amount.");
+      } else {
+        setError(err.message);
+      }
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -332,6 +388,7 @@ const AuthProvider = ({ children }) => {
         LevelUpdate,
         connectMetaMask,
         startPayment,
+        SignUpPayment,
       }}
     >
       {children}
