@@ -35,7 +35,7 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const isAuthenticated = !!authToken;
   const Login = async (username, password) => {
-    const url = `${BASE_URL}auth/Login`;
+    const url = `${BASE_URL}/Login`;
     const payload = {
       UserId: username,
       password: password,
@@ -107,7 +107,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const fetchUserData = async (authToken) => {
-    const url = `${BASE_URL}auth/me`;
+    const url = `${BASE_URL}/me`;
 
     try {
       setLoading(true);
@@ -153,7 +153,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const getAmountAndAddress = async () => {
-    const url = `${BASE_URL}auth/GetPayAmount`;
+    const url = `${BASE_URL}/GetPayAmount`;
     try {
       const res = await fetch(url, {
         method: "GET",
@@ -173,7 +173,7 @@ const AuthProvider = ({ children }) => {
     }
   };
   const LevelUpdate = async (data) => {
-    const url = `${BASE_URL}auth/levelUpgrade`;
+    const url = `${BASE_URL}/levelUpgrade`;
     try {
       const res = await fetch(url, {
         method: "POST",
@@ -253,14 +253,17 @@ const AuthProvider = ({ children }) => {
 
   const supportedChains = {
     bscMainnet: {
-      chainId: 56, // BSC Mainnet chain ID
-      rpcUrl: "https://bsc-dataseed.binance.org/", // BSC Mainnet RPC URL
+      chainId: 97, // BSC Testnet chain ID
+      rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/", // BSC Mainnet RPC URL
     },
   };
-  const startPayment = async ({ setError, setTxs, bnb, addr }) => {
+  const startPayment = async ({ setError, setTxs, bnb, addr, setPending }) => {
     try {
       if (!window.ethereum)
         throw new Error("No crypto wallet found. Please install it.");
+
+      // Set pending to true at the beginning of the payment process
+      setPending(true);
 
       // Convert the chainId to a hexadecimal string with a 0x prefix
       const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
@@ -289,15 +292,17 @@ const AuthProvider = ({ children }) => {
 
       // Wait for the transaction to be mined
       const receipt = await tx.wait();
-
+      console.log(tx);
       if (receipt.status === 1) {
         // Transaction was successful
         const data = {
           transaction_id: tx.hash,
           t_status: "success",
-          to_payed: tx.from,
+          to_payed: tx.to,
         };
-        LevelUpdate(data);
+
+        // Call LevelUpdate and set pending to false after it's complete
+        await LevelUpdate(data);
         setTxs([tx]);
       } else {
         // Transaction failed
@@ -314,6 +319,9 @@ const AuthProvider = ({ children }) => {
       } else {
         setError(err.message);
       }
+    } finally {
+      // Ensure that pending is set to false regardless of the outcome
+      setPending(false);
     }
   };
 

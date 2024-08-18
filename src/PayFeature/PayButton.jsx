@@ -3,11 +3,14 @@ import { ethers } from "ethers";
 import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
 import { useAuth } from "../Context/AuthContext";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function App({ amount, address }) {
   const { startPayment } = useAuth();
   const [error, setError] = useState();
   const [txs, setTxs] = useState([]);
+  const [pending, setPending] = useState(false);
   console.log("pay now", address, amount);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,6 +20,7 @@ export default function App({ amount, address }) {
       setTxs,
       bnb: amount,
       addr: address,
+      setPending,
     });
   };
 
@@ -40,12 +44,16 @@ export default function App({ amount, address }) {
         </div>
       </main>
       <footer className="">
-        <button
-          type="submit"
-          className="bg-primary w-full font-semibold p-2 rounded-md"
-        >
-          Pay now
-        </button>
+        {pending ? (
+          <LinearProgress color="inherit" />
+        ) : (
+          <button
+            type="submit"
+            className="bg-primary w-full font-semibold p-2 rounded-md"
+          >
+            Pay now
+          </button>
+        )}
         <ErrorMessage message={error} />
         <TxList txs={txs} />
       </footer>
