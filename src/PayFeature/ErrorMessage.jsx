@@ -2,8 +2,8 @@ export default function ErrorMessage({ message }) {
   if (!message) return null;
 
   return (
-    <div className="alert alert-error mt-5 bg-primary">
-      <div className="flex-1">
+    <div className="alert alert-error mt-5 bg-red-500 ">
+      <div className="flex-0001">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

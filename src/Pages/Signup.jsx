@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { useForm } from "react-hook-form";
+import ConnectMetaMaskPage from "./ConnectMetaMaskPage";
 
 const Signup = () => {
-  const { SignUp, getUserNameBySponsorId } = useAuth();
+  const { SignUp, getUserNameBySponsorId, userAddress } = useAuth();
   const [sponsorName, setSponsorName] = useState();
 
   const {
@@ -14,18 +15,21 @@ const Signup = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    const payload = {
+      ...data,
+      payId: userAddress,
+    };
     try {
-      await SignUp(data);
+      await SignUp(payload);
+      console.log(payload);
     } catch (error) {
       console.log(error);
-    } finally {
-      // Handle any additional logic here, if needed
     }
   };
 
   const password = watch("password");
   const Sponsor_id = watch("Sponsor_id");
-  console.log(Sponsor_id);
+
   useEffect(() => {
     const fetchSponsorName = async () => {
       if (Sponsor_id?.length === 12) {
@@ -35,16 +39,19 @@ const Signup = () => {
         } catch (error) {
           console.error("Error fetching sponsor name:", error);
         }
+      } else {
+        setSponsorName("");
       }
     };
-    if (Sponsor_id?.length !== 12) {
-      setSponsorName("");
-    }
 
     fetchSponsorName();
-  }, [Sponsor_id, getUserNameBySponsorId]); // Dependencies
+  }, [Sponsor_id, getUserNameBySponsorId]);
 
-  console.log(sponsorName);
+  // If userAddress is null or empty, show the ConnectMetaMaskPage
+  if (!userAddress) {
+    return <ConnectMetaMaskPage />;
+  }
+
   return (
     <div className="max-w-[480px] mx-auto">
       <div className="font-semibold tracking-widest bg-[#0a0a0a] pt-4 text-center pb-2 border-b-2 border-[#131313] sticky top-0">
@@ -65,12 +72,15 @@ const Signup = () => {
               })}
               type="text"
               className="input-field w-full"
-              placeholder="Enter your Sponser Id"
+              placeholder="Enter your Sponsor Id"
             />
             {errors.Sponsor_id && (
               <p className="error-text">{errors.Sponsor_id.message}</p>
             )}
           </label>
+
+          <label className="label-field">Payid</label>
+          <h2 className="input-field text-[10px]">{userAddress}</h2>
 
           <label className="label-field">
             Full name
@@ -82,6 +92,7 @@ const Signup = () => {
             />
             {errors.name && <p className="error-text">{errors.name.message}</p>}
           </label>
+
           <label className="label-field">
             Father name
             <input
@@ -96,6 +107,7 @@ const Signup = () => {
               <p className="error-text">{errors.fatherName.message}</p>
             )}
           </label>
+
           <label className="label-field">
             Phone No
             <input
@@ -110,7 +122,7 @@ const Signup = () => {
                   message: "Phone number must be 10 digits",
                 },
               })}
-              type="text" // Changed to text
+              type="text"
               className="input-field w-full"
               placeholder="Enter your phone number"
             />
@@ -118,6 +130,7 @@ const Signup = () => {
               <p className="error-text">{errors.phoneNo.message}</p>
             )}
           </label>
+
           <label className="label-field">
             Email
             <input
@@ -136,6 +149,7 @@ const Signup = () => {
               <p className="error-text">{errors.email.message}</p>
             )}
           </label>
+
           <label className="label-field">
             Password
             <input
@@ -154,6 +168,7 @@ const Signup = () => {
               <p className="error-text">{errors.password.message}</p>
             )}
           </label>
+
           <label className="label-field">
             Confirm Password
             <input
