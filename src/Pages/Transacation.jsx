@@ -75,7 +75,7 @@ function Transaction() {
                  <b> Transaction Details  </b>  
                  
                  <b style={{    fontSize: "0.875rem"}} className='text-white px-2'>
-  {value === 0 ? `To ${transaction.Resive.name}` :`From  ${ transaction.Give_by.name}`}
+  {value === 0 ? `` :`From  ${ transaction?.Give_by.name}`}
 </b>
 
                 </Typography>
