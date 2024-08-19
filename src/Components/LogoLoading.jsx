@@ -6,7 +6,7 @@ const LogoLoading = () => {
     <div className="flex flex-col mt-[90%] items-center justify-center gap-4">
       <div className="flex items-center gap-4 justify-center">
         <img className="w-12" src="/logochain.png" alt="logo" />
-        <h2 className="text-2xl font-bold">CoinChain</h2>
+        <h2 className="text-2xl font-bold">Faith Wealth</h2>
       </div>
       {/* <div className="w-[200px] bg-gray-200 rounded-full h-1 dark:bg-[#131313]">
         <div
