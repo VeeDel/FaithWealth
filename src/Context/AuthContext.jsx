@@ -244,6 +244,7 @@ const AuthProvider = ({ children }) => {
       }
     } else {
       console.error("MetaMask not detected");
+      showAlert("Please install MetaMask to connect to the wallet.", "error");
       setIsConnecting(false);
     }
   };
