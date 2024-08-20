@@ -136,7 +136,7 @@ const AuthProvider = ({ children }) => {
   const getUserNameBySponsorId = async (data) => {
     const url = "GetSponsor/";
     try {
-      const response = await fetch(`${BASE_URL}/${url}${data}`);
+      const response = await axios.get(`${BASE_URL}/${url}${data}`);
 
       if (!response.ok) {
         showAlert(response.error, "error");
