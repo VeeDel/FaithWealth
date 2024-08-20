@@ -262,7 +262,8 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const SignUpPayment = async ({ payload, bnb, addr, setError }) => {
+  const SignUpPayment = async (payload, bnb, addr, userAddress) => {
+    console.log("signuppayment", payload, bnb, addr);
     try {
       if (!window.ethereum)
         throw new Error("No crypto wallet found. Please install it.");
@@ -292,11 +293,21 @@ const AuthProvider = ({ children }) => {
         to: addr,
         value: ethers.utils.parseUnits(bnb.toString(), 18),
       });
+      console.log("tx", tx);
 
       const receipt = await tx.wait();
+      console.log("recipt", receipt);
 
       if (receipt.status === 1) {
-        await SignUp(payload); // Make sure SignUp is an async function if it returns a promise
+        const data = {
+          ...payload,
+          payId: userAddress,
+          transaction_id: tx?.hash,
+          t_status: "success",
+          to_pay: tx?.to,
+        };
+        await SignUp(data);
+        console.log(data);
       } else {
         throw new Error("Transaction failed. Please try again.");
       }
@@ -306,9 +317,11 @@ const AuthProvider = ({ children }) => {
         err.data?.code === -32000 &&
         err.data?.message.includes("insufficient funds")
       ) {
-        setError("Insufficient balance in account. Please add some amount.");
+        console.error(
+          "Insufficient balance in account. Please add some amount."
+        );
       } else {
-        setError(err.message);
+        console.error(err.message);
       }
     }
   };

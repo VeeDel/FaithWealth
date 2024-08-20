@@ -5,10 +5,17 @@ import ConnectMetaMaskPage from "./ConnectMetaMaskPage";
 import { Link } from "react-router-dom";
 import SignUpPaymentModel from "../Components/SignUpPaymentModel";
 const Signup = () => {
-  const { SignUp, getUserNameBySponsorId, userAddress } = useAuth();
+  const {
+    SignUp,
+    getUserNameBySponsorId,
+    userAddress,
+    startPayment,
+    SignUpPayment,
+  } = useAuth();
   const [sponsorName, setSponsorName] = useState();
   const [sponsorDetails, setSponsorDetails] = useState();
   const [sponsorError, setSponsorError] = useState(false);
+  const [error, setError] = useState("");
   const [sponsorErrorMessage, setSponsorErrorMessage] = useState(false);
   const {
     register,
@@ -25,9 +32,21 @@ const Signup = () => {
       t_status: "success",
       to_pay: sponsorDetails?.PayId,
     };
+    console.log(
+      "in signupPage",
+      data,
+      sponsorDetails?.amount,
+      sponsorDetails?.PayId
+    );
     try {
-      await SignUp(payload);
-      console.log(payload);
+      await SignUpPayment(
+        data,
+        sponsorDetails?.amount,
+        sponsorDetails?.PayId,
+        userAddress
+      );
+      // await SignUp(payload);
+      // console.log(payload);
     } catch (error) {
       console.log(error);
     }
