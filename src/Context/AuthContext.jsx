@@ -42,24 +42,13 @@ const AuthProvider = ({ children }) => {
     };
 
     try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const { data } = await axios.post(url, payload);
 
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-
-      const data = await res.json();
       if (data.success) {
         setResponse(data);
         setAuthToken(data.authtoken);
         localStorage.setItem("authtoken", data.authtoken);
-
+        window.location.reload();
         // Show success alert
         showAlert("Login successful!", "success");
       } else {
@@ -89,17 +78,7 @@ const AuthProvider = ({ children }) => {
       to_pay: data.to_pay,
     };
     try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-      const data = await res.json();
+      const { data } = await axios.post(url, payload);
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -111,19 +90,13 @@ const AuthProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const res = await fetch(url, {
-        method: "GET",
+      const { data } = await axios.get(url, {
         headers: {
           "Content-Type": "application/json",
           authtoken: authToken,
         },
       });
 
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-
-      const data = await res.json();
       console.log("User Data:", data);
       setUserData(data);
     } catch (error) {
@@ -134,17 +107,11 @@ const AuthProvider = ({ children }) => {
   };
 
   const getUserNameBySponsorId = async (data) => {
-    const url = "GetSponsor/";
+    const url = `GetSponsor/${data}`;
     try {
-      const response = await axios.get(`${BASE_URL}/${url}${data}`);
+      const response = await axios.get(`${BASE_URL}/${url}`);
 
-      if (!response.ok) {
-        showAlert(response.error, "error");
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      return response.data;
     } catch (error) {
       showAlert(error?.response?.data?.error, "error");
       console.log("Error fetching user name by sponsor ID:", error);
@@ -156,44 +123,33 @@ const AuthProvider = ({ children }) => {
   const getAmountAndAddress = async () => {
     const url = `${BASE_URL}/GetPayAmount`;
     try {
-      const res = await fetch(url, {
-        method: "GET",
+      const { data } = await axios.get(url, {
         headers: {
           "Content-Type": "application/json",
           authtoken: authToken,
         },
       });
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-
-      const data = await res.json();
       return data;
     } catch (error) {
       console.error(error);
     }
   };
+
   const LevelUpdate = async (data) => {
     const url = `${BASE_URL}/levelUpgrade`;
     try {
-      const res = await fetch(url, {
-        method: "POST",
+      const response = await axios.post(url, data, {
         headers: {
           "Content-Type": "application/json",
           authtoken: authToken,
         },
-        body: JSON.stringify(data), // Send data in the request body
       });
 
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-      const responseData = await res.json();
-      if (responseData.success) {
+      if (response.data.success) {
         fetchUserData(authToken);
       }
 
-      return responseData;
+      return response.data;
     } catch (error) {
       console.error(error);
     }
@@ -213,7 +169,6 @@ const AuthProvider = ({ children }) => {
 
     if (window.ethereum) {
       try {
-        // Check if MetaMask is already connected
         const accounts = await window.ethereum.request({
           method: "eth_accounts",
         });
@@ -224,19 +179,12 @@ const AuthProvider = ({ children }) => {
           return;
         }
 
-        // Request access to the user's MetaMask account
         await window.ethereum.request({ method: "eth_requestAccounts" });
 
-        // Create a new provider using ethers.js
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-        // Get the signer (the connected MetaMask account)
         const signer = provider.getSigner();
-
-        // Retrieve the user's MetaMask address
         const address = await signer.getAddress();
         setUserAddress(address);
-        // addressId(address);
         console.log("MetaMask Address:", address);
       } catch (error) {
         console.error("Error connecting MetaMask:", error);
@@ -264,13 +212,9 @@ const AuthProvider = ({ children }) => {
       if (!window.ethereum)
         throw new Error("No crypto wallet found. Please install it.");
 
-      // Set pending to true at the beginning of the payment process
       setPending(true);
-
-      // Convert the chainId to a hexadecimal string with a 0x prefix
       const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
 
-      // Check if user is connected to the BSC Mainnet
       if (window.ethereum.chainId !== chainIdHex) {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
@@ -278,40 +222,32 @@ const AuthProvider = ({ children }) => {
         });
       }
 
-      // After network switch, reinitialize the provider and signer
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []); // Request accounts if not already requested
+      await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
 
-      // Validate address format
       ethers.utils.getAddress(addr);
 
-      // Send BNB on BSC Mainnet
       const tx = await signer.sendTransaction({
         to: addr,
         value: ethers.utils.parseUnits(bnb.toString(), 18),
       });
 
-      // Wait for the transaction to be mined
       const receipt = await tx.wait();
       console.log(tx);
       if (receipt.status === 1) {
-        // Transaction was successful
         const data = {
           transaction_id: tx.hash,
           t_status: "success",
           to_payed: tx.to,
         };
 
-        // Call LevelUpdate and set pending to false after it's complete
         await LevelUpdate(data);
         setTxs([tx]);
       } else {
-        // Transaction failed
         throw new Error("Transaction failed. Please try again.");
       }
     } catch (err) {
-      // Handle insufficient funds error
       if (
         err.code === -32603 &&
         err.data?.code === -32000 &&
@@ -322,7 +258,6 @@ const AuthProvider = ({ children }) => {
         setError(err.message);
       }
     } finally {
-      // Ensure that pending is set to false regardless of the outcome
       setPending(false);
     }
   };
@@ -332,7 +267,6 @@ const AuthProvider = ({ children }) => {
       if (!window.ethereum)
         throw new Error("No crypto wallet found. Please install it.");
 
-      // Ensure the address is valid before proceeding
       if (!addr) {
         throw new Error(
           "Invalid address provided. Please check the address input."
@@ -354,7 +288,6 @@ const AuthProvider = ({ children }) => {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
 
-      // Send BNB on BSC Mainnet
       const tx = await signer.sendTransaction({
         to: addr,
         value: ethers.utils.parseUnits(bnb.toString(), 18),
@@ -363,7 +296,6 @@ const AuthProvider = ({ children }) => {
       const receipt = await tx.wait();
 
       if (receipt.status === 1) {
-        // Transaction was successful
         await SignUp(payload); // Make sure SignUp is an async function if it returns a promise
       } else {
         throw new Error("Transaction failed. Please try again.");
@@ -380,6 +312,7 @@ const AuthProvider = ({ children }) => {
       }
     }
   };
+
   return (
     <AuthContext.Provider
       value={{
