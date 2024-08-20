@@ -146,9 +146,10 @@ const AuthProvider = ({ children }) => {
       const result = await response.json();
       return result;
     } catch (error) {
-      showAlert(error.response.data.error, "error");
+      showAlert(error?.response?.data?.error, "error");
       console.log("Error fetching user name by sponsor ID:", error);
       // Optionally, handle the error further or rethrow it
+      return error.response.data;
     }
   };
 

@@ -8,7 +8,8 @@ const Signup = () => {
   const { SignUp, getUserNameBySponsorId, userAddress } = useAuth();
   const [sponsorName, setSponsorName] = useState();
   const [sponsorDetails, setSponsorDetails] = useState();
-
+  const [sponsorError, setSponsorError] = useState(false);
+  const [sponsorErrorMessage, setSponsorErrorMessage] = useState(false);
   const {
     register,
     handleSubmit,
@@ -41,7 +42,18 @@ const Signup = () => {
         try {
           const result = await getUserNameBySponsorId(Sponsor_id);
           setSponsorName(result?.name);
+          console.log("result of sponsor", result);
+
           setSponsorDetails(result);
+
+          if (result.success === false) {
+            setSponsorError(true);
+            setSponsorErrorMessage(result.error);
+          }
+          if (result.success === true) {
+            setSponsorError(false);
+            setSponsorErrorMessage();
+          }
         } catch (error) {
           console.error("Error fetching sponsor name:", error);
         }
@@ -53,6 +65,7 @@ const Signup = () => {
     fetchSponsorName();
   }, [Sponsor_id]); // Dependencies
 
+  console.log(sponsorError, sponsorErrorMessage);
   // If userAddress is null or empty, show the ConnectMetaMaskPage
   if (!userAddress) {
     return <ConnectMetaMaskPage />;
@@ -80,10 +93,8 @@ const Signup = () => {
               className="input-field w-full"
               placeholder="Enter your Sponsor Id"
             />
-            {errors.Sponsor_id && (
-              <p className="error-text text-red-500">
-                {errors.Sponsor_id.message}
-              </p>
+            {sponsorError && (
+              <p className="error-text text-red-500">{sponsorErrorMessage}</p>
             )}
           </label>
 
