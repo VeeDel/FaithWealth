@@ -4,13 +4,17 @@ import { useForm } from "react-hook-form";
 import ConnectMetaMaskPage from "./ConnectMetaMaskPage";
 import { Link } from "react-router-dom";
 import SignUpPaymentModel from "../Components/SignUpPaymentModel";
+import RegistrationModal from "../Modal/RegistrationModal";
 const Signup = () => {
   const {
     SignUp,
+    modal,
+    toggle,
     getUserNameBySponsorId,
     userAddress,
     startPayment,
     SignUpPayment,
+    userCredentials
   } = useAuth();
   const [sponsorName, setSponsorName] = useState();
   const [sponsorDetails, setSponsorDetails] = useState();
@@ -91,6 +95,8 @@ const Signup = () => {
   }
 
   return (
+<>
+
     <div className="max-w-[480px] mx-auto">
       <div className="font-semibold tracking-widest bg-[#0a0a0a] pt-4 text-center pb-2 border-b-2 border-[#131313] sticky top-0">
         Signup
@@ -249,6 +255,8 @@ const Signup = () => {
         </p>
       </div>
     </div>
+    <RegistrationModal modal={modal} userCredentials={userCredentials} toggle={toggle}/>
+    </>  
   );
 };
 
