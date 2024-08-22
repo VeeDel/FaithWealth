@@ -59,32 +59,41 @@ const AuthProvider = ({ children }) => {
       console.error("Error fetching the API:", error);
     }
   };
+    const [modal, setModal] = useState(false);
+    const toggle = () => setModal(!modal);
+    const [userCredentials, setUserCredentials] = useState({ userId: '', password: '' });
+    const SignUp = async (data) => {
+      const url = `${BASE_URL}/UserRegister`;
+      const payload = {
+        name: data.name,
+        fatherName: data.fatherName,
+        Sponsor_id: data.Sponsor_id,
+        city: "somecity",
+        State: "somestate",
+        phoneNo: data.phoneNo,
+        password: data.password,
+        email: data.email,
+        Upi_no: data.phoneNo,
+        PayId: data.payId,
+        t_status: data.t_status,
+        transaction_id: data.transaction_id,
+        to_pay: data.to_pay,
+      };
+      try {
+        const response = await axios.post(url, payload);
+        if (response.data.success) {
+          setUserCredentials({
+            userId: response.data.data.user_id,
+            password: response.data.data.password,
+          });
 
-  const SignUp = async (data) => {
-    const url = `${BASE_URL}/UserRegister`;
-    const payload = {
-      name: data.name,
-      fatherName: data.fatherName,
-      Sponsor_id: data.Sponsor_id,
-      city: "somecity",
-      State: "somestate",
-      phoneNo: data.phoneNo,
-      password: data.password,
-      email: data.email,
-      Upi_no: data.phoneNo,
-      PayId: data.payId,
-      t_status: data.t_status,
-      transaction_id: data.transaction_id,
-      to_pay: data.to_pay,
+        }
+        toggle();
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     };
-    try {
-      const { data } = await axios.post(url, payload);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const fetchUserData = async (authToken) => {
     const url = `${BASE_URL}/me`;
 
@@ -262,7 +271,8 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const SignUpPayment = async ({ payload, bnb, addr, setError }) => {
+  const SignUpPayment = async (payload, bnb, addr, userAddress) => {
+    console.log("signuppayment", payload, bnb, addr);
     try {
       if (!window.ethereum)
         throw new Error("No crypto wallet found. Please install it.");
@@ -292,11 +302,21 @@ const AuthProvider = ({ children }) => {
         to: addr,
         value: ethers.utils.parseUnits(bnb.toString(), 18),
       });
+      console.log("tx", tx);
 
       const receipt = await tx.wait();
+      console.log("recipt", receipt);
 
       if (receipt.status === 1) {
-        await SignUp(payload); // Make sure SignUp is an async function if it returns a promise
+        const data = {
+          ...payload,
+          payId: userAddress,
+          transaction_id: tx?.hash,
+          t_status: "success",
+          to_pay: tx?.to,
+        };
+        await SignUp(data);
+        console.log(data);
       } else {
         throw new Error("Transaction failed. Please try again.");
       }
@@ -306,9 +326,11 @@ const AuthProvider = ({ children }) => {
         err.data?.code === -32000 &&
         err.data?.message.includes("insufficient funds")
       ) {
-        setError("Insufficient balance in account. Please add some amount.");
+        console.error(
+          "Insufficient balance in account. Please add some amount."
+        );
       } else {
-        setError(err.message);
+        console.error(err.message);
       }
     }
   };
@@ -316,6 +338,8 @@ const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
+        toggle,
+        modal,
         response,
         showAlert,
         authToken,
@@ -332,6 +356,7 @@ const AuthProvider = ({ children }) => {
         connectMetaMask,
         startPayment,
         SignUpPayment,
+        userCredentials
       }}
     >
       {children}

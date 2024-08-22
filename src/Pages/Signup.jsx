@@ -4,11 +4,22 @@ import { useForm } from "react-hook-form";
 import ConnectMetaMaskPage from "./ConnectMetaMaskPage";
 import { Link } from "react-router-dom";
 import SignUpPaymentModel from "../Components/SignUpPaymentModel";
+import RegistrationModal from "../Modal/RegistrationModal";
 const Signup = () => {
-  const { SignUp, getUserNameBySponsorId, userAddress } = useAuth();
+  const {
+    SignUp,
+    modal,
+    toggle,
+    getUserNameBySponsorId,
+    userAddress,
+    startPayment,
+    SignUpPayment,
+    userCredentials
+  } = useAuth();
   const [sponsorName, setSponsorName] = useState();
   const [sponsorDetails, setSponsorDetails] = useState();
   const [sponsorError, setSponsorError] = useState(false);
+  const [error, setError] = useState("");
   const [sponsorErrorMessage, setSponsorErrorMessage] = useState(false);
   const {
     register,
@@ -25,9 +36,21 @@ const Signup = () => {
       t_status: "success",
       to_pay: sponsorDetails?.PayId,
     };
+    console.log(
+      "in signupPage",
+      data,
+      sponsorDetails?.amount,
+      sponsorDetails?.PayId
+    );
     try {
-      await SignUp(payload);
-      console.log(payload);
+      await SignUpPayment(
+        data,
+        sponsorDetails?.amount,
+        sponsorDetails?.PayId,
+        userAddress
+      );
+      // await SignUp(payload);
+      // console.log(payload);
     } catch (error) {
       console.log(error);
     }
@@ -72,6 +95,8 @@ const Signup = () => {
   }
 
   return (
+<>
+
     <div className="max-w-[480px] mx-auto">
       <div className="font-semibold tracking-widest bg-[#0a0a0a] pt-4 text-center pb-2 border-b-2 border-[#131313] sticky top-0">
         Signup
@@ -230,6 +255,8 @@ const Signup = () => {
         </p>
       </div>
     </div>
+    <RegistrationModal modal={modal} userCredentials={userCredentials} toggle={toggle}/>
+    </>  
   );
 };
 
