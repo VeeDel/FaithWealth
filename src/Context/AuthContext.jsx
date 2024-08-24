@@ -1,9 +1,8 @@
 import { Alert, Snackbar } from "@mui/material";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { BASEURL } from "../services/http-Pos";
-// import { Navigate } from "react-router-dom";
 import { ethers } from "ethers";
-
+import DataService from "../services/requestApi"
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 const AuthContext = createContext(null);
@@ -57,6 +56,7 @@ const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching the API:", error);
+      showAlert(error?.response?.data?.error, "error")
     }
   };
     const [modal, setModal] = useState(false);
@@ -222,7 +222,6 @@ const AuthProvider = ({ children }) => {
         throw new Error("No crypto wallet found. Please install it.");
 
       setPending(true);
-      const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
 
       if (window.ethereum.chainId !== chainIdHex) {
         await window.ethereum.request({
@@ -271,6 +270,22 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const CheckPayidExist = async(id)=>{
+    try {
+      const Data ={ 
+          "PayId":id
+      }
+      const response = await DataService.checkPayidExist(Data)
+      return response.data
+      
+    } catch (error) {
+      console.log(error)
+      return error
+    }
+  }
+
+
+
   const SignUpPayment = async (payload, bnb, addr, userAddress) => {
     console.log("signuppayment", payload, bnb, addr);
     try {
@@ -282,7 +297,11 @@ const AuthProvider = ({ children }) => {
           "Invalid address provided. Please check the address input."
         );
       }
-
+       const IsaddressExist =await CheckPayidExist(userAddress)
+       if(!IsaddressExist.success){
+         showAlert(IsaddressExist.message, "error")
+        return
+       }
       ethers.utils.getAddress(addr);
 
       const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
@@ -335,6 +354,10 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout =()=>{
+    localStorage.clear()
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -356,7 +379,8 @@ const AuthProvider = ({ children }) => {
         connectMetaMask,
         startPayment,
         SignUpPayment,
-        userCredentials
+        userCredentials,
+        logout
       }}
     >
       {children}

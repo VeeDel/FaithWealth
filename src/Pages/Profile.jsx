@@ -17,11 +17,12 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { useAuth } from "../Context/AuthContext";
 import LevelUpgradeModel from "../Components/LevelUpgradeModel";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom";
 const Profile = () => {
-  const { userData } = useAuth();
+  const { userData ,logout} = useAuth();
   console.log(userData);
   const id = userData?.user_id;
-
+  const navigate = useNavigate()
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [transition, setTransition] = useState(undefined);
 
@@ -47,7 +48,10 @@ const Profile = () => {
   // const imageNumber = userData?.phoneNo?.slice(9, 10);
 
   // const progressValue = 3000;
-
+  const handlelogout = ()=>{
+    logout()
+    navigate('/login')
+  }
   return (
     <div>
       <div className="border-2 border-dimblack py-4 rounded-xl my-2 flex justify-evenly items-center">
@@ -55,7 +59,7 @@ const Profile = () => {
           <img src={nft0} className="w-full h-full rounded-full " />{" "}
         </div>
         <div>
-          <h2 className="text-sm font-semibold">Level {userData?.level} <LogoutIcon className="text-white mx-2"/></h2>
+          <h2 className="text-sm font-semibold">Level {userData?.level} <LogoutIcon onClick={handlelogout} className="text-white mx-2"/></h2>
           
           <h3 className="text-sm tracking-wider flex items-center gap-2">
             {id}
@@ -120,11 +124,11 @@ const Profile = () => {
         {userData?.PayId}
       </div>
 
-      <div className="flex gap-2">
+      {userData.level <10 &&<div className="flex gap-2">
         <button className="bg-primary text-white border-[1px] border-primary font-semibold active:bg-[#5746d5] rounded-xl h-full w-full mt-4 mb-16 p-2">
           <LevelUpgradeModel />
         </button>
-      </div>
+      </div>}
 
       {/* Snackbar for copy confirmation */}
       <Snackbar

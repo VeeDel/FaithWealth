@@ -19,7 +19,7 @@ const style = {
 };
 
 export default function BasicModal() {
-  const { getAmountAndAddress } = useAuth();
+  const { getAmountAndAddress ,showAlert } = useAuth();
   const [synchro, setSynchro] = useState(null);
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -27,7 +27,13 @@ export default function BasicModal() {
   const fetchSynchro = async () => {
     try {
       const details = await getAmountAndAddress();
-      setSynchro(details);
+      if(details.success){
+        console.log(details)
+        setOpen(true);
+        setSynchro(details);
+      }else{
+        showAlert(details.message)
+      }
     } catch (error) {
       console.error("Error fetching payment details:", error);
     }
@@ -35,7 +41,7 @@ export default function BasicModal() {
   console.log(synchro);
 
   const handleOpen = () => {
-    setOpen(true);
+  
     fetchSynchro();
   };
 
