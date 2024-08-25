@@ -25,19 +25,6 @@ const Signup = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const payload = {
-      ...data,
-      payId: userAddress,
-      transaction_id: "0xji8gyvg307dbfudsf908a9a8s9d",
-      t_status: "success",
-      to_pay: sponsorDetails?.PayId,
-    };
-    console.log(
-      "in signupPage",
-      data,
-      sponsorDetails?.amount,
-      sponsorDetails?.PayId
-    );
     try {
       await SignUpPayment(
         data,
@@ -45,8 +32,6 @@ const Signup = () => {
         sponsorDetails?.PayId,
         userAddress
       );
-      // await SignUp(payload);
-      // console.log(payload);
     } catch (error) {
       console.log(error);
     }
