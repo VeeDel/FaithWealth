@@ -10,5 +10,8 @@ class DataService {
   myreceivedtransaction(data) {
     return http.get("/myreceivedtransaction", data);
   }
+  checkPayidExist(id){
+    return http.post("/checkPayId", id);
+  }
 }
 export default new DataService();
