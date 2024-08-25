@@ -2,7 +2,7 @@ import { Alert, Snackbar } from "@mui/material";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { BASEURL } from "../services/http-Pos";
 import { ethers } from "ethers";
-import DataService from "../services/requestApi"
+import DataService from "../services/requestApi";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 const AuthContext = createContext(null);
@@ -56,44 +56,46 @@ const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching the API:", error);
-      showAlert(error?.response?.data?.error, "error")
+      showAlert(error?.response?.data?.error, "error");
     }
   };
-    const [modal, setModal] = useState(false);
-    const toggle = () => setModal(!modal);
-    const [userCredentials, setUserCredentials] = useState({ userId: '', password: '' });
-    const SignUp = async (data) => {
-      const url = `${BASE_URL}/UserRegister`;
-      const payload = {
-        name: data.name,
-        fatherName: data.fatherName,
-        Sponsor_id: data.Sponsor_id,
-        city: "somecity",
-        State: "somestate",
-        phoneNo: data.phoneNo,
-        password: data.password,
-        email: data.email,
-        Upi_no: data.phoneNo,
-        PayId: data.payId,
-        t_status: data.t_status,
-        transaction_id: data.transaction_id,
-        to_pay: data.to_pay,
-      };
-      try {
-        const response = await axios.post(url, payload);
-        if (response.data.success) {
-          setUserCredentials({
-            userId: response.data.data.user_id,
-            password: response.data.data.password,
-          });
-
-        }
-        toggle();
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
+  const [modal, setModal] = useState(false);
+  const toggle = () => setModal(!modal);
+  const [userCredentials, setUserCredentials] = useState({
+    userId: "",
+    password: "",
+  });
+  const SignUp = async (data) => {
+    const url = `${BASE_URL}/UserRegister`;
+    const payload = {
+      name: data.name,
+      fatherName: data.fatherName,
+      Sponsor_id: data.Sponsor_id,
+      city: "somecity",
+      State: "somestate",
+      phoneNo: data.phoneNo,
+      password: data.password,
+      email: data.email,
+      Upi_no: data.phoneNo,
+      PayId: data.payId,
+      t_status: data.t_status,
+      transaction_id: data.transaction_id,
+      to_pay: data.to_pay,
     };
+    try {
+      const response = await axios.post(url, payload);
+      if (response.data.success) {
+        setUserCredentials({
+          userId: response.data.data.user_id,
+          password: response.data.data.password,
+        });
+      }
+      toggle();
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchUserData = async (authToken) => {
     const url = `${BASE_URL}/me`;
 
@@ -270,38 +272,48 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const CheckPayidExist = async(id)=>{
+  const CheckPayidExist = async (id) => {
     try {
-      const Data ={ 
-          "PayId":id
-      }
-      const response = await DataService.checkPayidExist(Data)
-      return response.data
-      
+      const Data = {
+        PayId: id,
+      };
+      const response = await DataService.checkPayidExist(Data);
+      return response.data;
     } catch (error) {
-      console.log(error)
-      return error
+      console.log(error);
+      return error;
     }
-  }
+  };
 
-
-
-  const SignUpPayment = async (payload, bnb, addr, userAddress) => {
+  const SignUpPayment = async (
+    payload,
+    bnb,
+    addr,
+    userAddress,
+    setIsLoading
+  ) => {
     console.log("signuppayment", payload, bnb, addr);
+
+    // Start loading
+    setIsLoading(true);
+
     try {
-      if (!window.ethereum)
+      if (!window.ethereum) {
         throw new Error("No crypto wallet found. Please install it.");
+      }
 
       if (!addr) {
         throw new Error(
           "Invalid address provided. Please check the address input."
         );
       }
-       const IsaddressExist =await CheckPayidExist(userAddress)
-       if(!IsaddressExist.success){
-         showAlert(IsaddressExist.message, "error")
-        return
-       }
+
+      const IsaddressExist = await CheckPayidExist(userAddress);
+      if (!IsaddressExist.success) {
+        showAlert(IsaddressExist.message, "error");
+        return;
+      }
+
       ethers.utils.getAddress(addr);
 
       const chainIdHex = `0x${supportedChains.bscMainnet.chainId.toString(16)}`;
@@ -324,7 +336,7 @@ const AuthProvider = ({ children }) => {
       console.log("tx", tx);
 
       const receipt = await tx.wait();
-      console.log("recipt", receipt);
+      console.log("receipt", receipt);
 
       if (receipt.status === 1) {
         const data = {
@@ -351,12 +363,15 @@ const AuthProvider = ({ children }) => {
       } else {
         console.error(err.message);
       }
+    } finally {
+      // End loading
+      setIsLoading(false);
     }
   };
 
-  const logout =()=>{
-    localStorage.clear()
-  }
+  const logout = () => {
+    localStorage.clear();
+  };
 
   return (
     <AuthContext.Provider
@@ -380,7 +395,7 @@ const AuthProvider = ({ children }) => {
         startPayment,
         SignUpPayment,
         userCredentials,
-        logout
+        logout,
       }}
     >
       {children}
